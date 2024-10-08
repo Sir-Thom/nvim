@@ -163,13 +163,63 @@ require("lazy").setup({
      "folke/which-key.nvim",
           { 'ojroques/nvim-hardline' },
     'neovim/nvim-lspconfig',
-{
-    'goolord/alpha-nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function ()
-        require'alpha'.setup(require'alpha.themes.startify'.config)
-    end
-},
+     {
+        "ahmedkhalf/project.nvim",
+        event = "VeryLazy",
+        config = function()
+            require("project_nvim").setup({
+                manual_mode = false,
+                detection_methods = { "lsp", "pattern" },
+                patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json" },
+                ignore_lsp = {},
+                exclude_dirs = {},
+                show_hidden = true,
+                silent_chdir = true,
+                scope_chdir = 'global',
+                datapath = vim.fn.stdpath("data"),
+            })
+        end,
+    },
+ {
+        'goolord/alpha-nvim',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        config = function()
+            local alpha = require("alpha")
+            local dashboard = require("alpha.themes.dashboard")
+
+            -- Function to get recent projects
+            local function get_recent_projects()
+                local project_nvim = require("project_nvim")
+                local success, projects = pcall(project_nvim.get_recent_projects)
+                projects = success and projects or {}
+
+                local buttons = {}
+                for _, project in ipairs(projects) do
+                    local button = dashboard.button(project.name, "📁  " .. project.name, ":cd " .. project.path .. "<CR>")
+                    table.insert(buttons, button)
+                end
+                return buttons
+            end
+
+            -- Set header
+          
+            -- Add default buttons
+            dashboard.section.buttons.val = {
+                dashboard.button("f", "  Find File", ":Telescope find_files<CR>"),
+                dashboard.button("n", "  New File", ":enew<CR>"),
+                dashboard.button("p", "  Projects", ":Telescope projects<CR>"),
+                dashboard.button("q", "  Quit", ":qa<CR>"),
+            }
+
+            -- Extend with recent projects
+            local recent_projects_buttons = get_recent_projects()
+            dashboard.section.buttons.val = vim.tbl_deep_extend("force", dashboard.section.buttons.val, recent_projects_buttons)
+
+
+            -- Set up the dashboard
+            alpha.setup(dashboard.opts)
+        end,
+    },
 {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
@@ -180,6 +230,8 @@ require("lazy").setup({
       -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
     },
 { "rcarriga/nvim-dap-ui", dependencies = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"} },
+{'mortepau/codicons.nvim'},
+
   {
     "jay-babu/mason-nvim-dap.nvim",
     event = "VeryLazy",
