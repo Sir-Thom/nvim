@@ -131,10 +131,7 @@ require("lazy").setup({
    'hrsh7th/cmp-nvim-lsp', -- LSP source for nvim-cmp,
    'saadparwaiz1/cmp_luasnip', -- Snippets source for nvim-cmp
    'L3MON4D3/LuaSnip', -- Snippets plugin
-        'simrat39/rust-tools.nvim',
-  
-  
-  
+    'simrat39/rust-tools.nvim',
     'mfussenegger/nvim-lint',
 
  {
@@ -173,7 +170,7 @@ require("lazy").setup({
                 patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json" },
                 ignore_lsp = {},
                 exclude_dirs = {},
-                show_hidden = true,
+                show_hidden = false,
                 silent_chdir = true,
                 scope_chdir = 'global',
                 datapath = vim.fn.stdpath("data"),
