@@ -1,6 +1,6 @@
 require("mason").setup()
 require("mason-lspconfig").setup()
-
+ 
 local lsp = require('lsp-zero').preset({ 'recommended' })
 
 lsp.on_attach(function(client, bufnr)
